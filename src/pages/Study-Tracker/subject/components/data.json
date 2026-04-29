@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "subject": "English",
+    "color": "#bada55"
+  },
+  {
+    "id": 2,
+    "subject": "JavaScript",
+    "color": "#bada55"
+  },
+  {
+    "id": 3,
+    "subject": "Japanese",
+    "color": "#bada55"
+  },
+  {
+    "id": 4,
+    "subject": "Vue.js",
+    "color": "#bada55"
+  },
+  {
+    "id": 5,
+    "subject": "Math",
+    "color": "#bada55"
+  },
+  {
+    "id": 6,
+    "subject": "Go",
+    "color": "#bada55"
+  },
+  {
+    "id": 7,
+    "subject": "English",
+    "color": "#bada55"
+  },
+  {
+    "id": 8,
+    "subject": "React",
+    "color": "#bada55"
+  },
+  {
+    "id": 9,
+    "subject": "German",
+    "color": "#bada55"
+  },
+  {
+    "id": 10,
+    "subject": "System Design",
+    "color": "#bada55"
+  }
+]

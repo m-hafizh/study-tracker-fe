@@ -1,0 +1,244 @@
+# Scaffolding
+
+npm create vite@latest [nama folder project kalian] -- --template react-ts
+
+============================================================================
+
+# Packages
+
+- tailwindcss (https://tailwindcss.com/)
+- shadcn ui (https://ui.shadcn.com/blocks)
+- axios
+- react-router-dom
+- motion/react
+
+============================================================================
+
+# Install Tailwindcss
+
+1.
+npm install tailwindcss @tailwindcss/vite
+
+2.
+<----------------------------------------------->
+// vite.config.ts
+import { defineConfig } from 'vite'
+import tailwindcss from '@tailwindcss/vite' // add this
+
+export default defineConfig({
+  plugins: [
+    tailwindcss(), // add this
+  ],
+})
+<----------------------------------------------->
+
+3.
+<----------------------------------------------->
+// add this on your css file (App.css / index.css)
+@import "tailwindcss";
+<----------------------------------------------->
+
+src: 
+https://tailwindcss.com/docs/installation/using-vite
+
+============================================================================
+
+# Install Shadcn UI (+ Tailwindcss)
+
+1.
+pnpm create vite@latest
+
+2.
+pnpm add tailwindcss @tailwindcss/vite
+
+3.
+@import "tailwindcss";
+
+4.
+see more on src below
+
+src:
+https://ui.shadcn.com/docs/installation/vite
+
+
+============================================================================
+
+# Structure Folder
+
+api
+assets
+components
+config
+constants
+context
+hooks
+pages
+services
+types
+utils
+
+command:
+mkdir src/{api,assets,components,config,constants,context,hooks,pages,services,types,utils}
+
+src: 
+https://orchid-clematis-3e4.notion.site/Class-17-React-10d80e94284a80f2a32dccb1262a2843
+
+============================================================================
+
+// .env
+
+VITE_PRIVATE_API_KEY='0ICVyrNhPL56Oss58qv-_y42PhSQvYcPm6Vz26j4bNw'
+VITE_BASE_API_URL='http://localhost:8080'
+
+// .env.development
+VITE_BASE_API_URL='http://localhost:8080'
+VITE_PRIVATE_API_KEY='dev-key'
+
+// .env.production
+VITE_BASE_API_URL='https://localhost:8081'
+VITE_PRIVATE_API_KEY='prod-key'
+
+
+src: 
+https://orchid-clematis-3e4.notion.site/Class-21-React-11f80e94284a8058bb86cda23cd8a476
+
+============================================================================
+
+# .gitignore
+.env
+.env.*
+
+src: 
+https://orchid-clematis-3e4.notion.site/Class-21-React-11f80e94284a8058bb86cda23cd8a476
+
+============================================================================
+
+# Custom API
+
+src/api
+├── index.ts  // Custom Axios instance dengan konfigurasi dasar
+
+
+src: 
+https://orchid-clematis-3e4.notion.site/Class-21-React-11f80e94284a8058bb86cda23cd8a476
+
+
+============================================================================
+
+## CRUD with API ##
+
+# model
+src/models/todo.ts
+
+# api query (crud)
+src/api/todos/getTodos.ts
+
+# hooks (crud)
+src/hooks/todos/useGetTodos.ts
+
+============================================================================
+
+### Set Auto-Import ##
+
+1. pnpm add unplugin-auto-import react-router-dom
+2. open vite.config.ts
+3. add this code:
+
+```
+import AutoImport from 'unplugin-auto-import/vite'
+
+export default defineConfig({
+  plugins: [
+    ...
+    AutoImport({
+      imports: ['react', 'react-router-dom' ],
+      // Auto import your components
+      dirs: ["src/pages/**", 'src/api/**', 'src/hooks/**'],
+      dts: 'src/auto-imports.d.ts',
+    }),
+    ....
+})
+```
+============================================================================
+
+
+## Set Routes Based-on Directory (like Next.js) ##
+
+1. pnpm add vite-plugin-pages
+
+2. open vite.config.ts, update code:
+
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import Pages from "vite-plugin-pages"; // Add this
+
+export default defineConfig({
+  plugins: [
+    react(),
+    // Add this
+    Pages({
+      dirs: "src/pages",
+      extensions: ["tsx", "ts"],
+    }),
+  ],
+});
+
+3. wire routes on src/routes.tsx, add this code:
+
+import { useRoutes } from "react-router-dom";
+import routes from "~react-pages";
+
+export default function Router() {
+  return useRoutes(routes);
+}
+
+4. open main.tsx, update code:
+
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import Router from "./routes"; // add this
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <Router /> // add this
+    </BrowserRouter>
+  </React.StrictMode>
+);
+
+
+5. example usage, create src/pages/about.tsx
+
+export default function About() {
+  return <h1>About</h1>;
+}
+
+6. example usage for dynamic route, create src/pages/blog/[slug].tsx
+
+import { useParams } from "react-router-dom";
+
+export default function BlogPost() {
+  const { slug } = useParams();
+  return <h1>Post: {slug}</h1>;
+}
+
+*note you can change "slug" wording with whatever you want
+
+
+====================================================================
+
+# install chakra ui charts
+pnpm add @chakra-ui/charts recharts@^3
+
+# install react-cropper cropperjs
+pnpm add react-cropper cropperjs
+
+# download css
+1. open https://react-cropper.github.io/react-cropper/
+2. click Download .zip
+3. see react-cropper-react-cropper-d2e54f9/example/assets/ and find bundle.css
+4. copy and paste it to /node_modules/react-cropper/dist/
+5. rename it to "react-cropper.css"
+6. you can import it (e.g. import "react-cropper/dist/react-cropper.css")
+

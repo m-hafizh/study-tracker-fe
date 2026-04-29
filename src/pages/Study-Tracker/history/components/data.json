@@ -1,0 +1,102 @@
+[
+  {
+    "id": 1,
+    "subject": "English",
+    "topic": "Basic Grammar",
+    "date": "2025-01-05",
+    "startTime": "07:00",
+    "endTime": "08:00",
+    "durationMinutes": 60,
+    "notes": "Learned simple present tense"
+  },
+  {
+    "id": 2,
+    "subject": "JavaScript",
+    "topic": "Array Methods",
+    "date": "2025-01-05",
+    "startTime": "09:30",
+    "endTime": "10:45",
+    "durationMinutes": 75,
+    "notes": "map, filter, reduce practice"
+  },
+  {
+    "id": 3,
+    "subject": "Japanese",
+    "topic": "Kanji Practice",
+    "date": "2025-01-06",
+    "startTime": "06:30",
+    "endTime": "07:15",
+    "durationMinutes": 45,
+    "notes": "JLPT N4 kanji review"
+  },
+  {
+    "id": 4,
+    "subject": "Vue.js",
+    "topic": "Composition API",
+    "date": "2025-01-06",
+    "startTime": "20:00",
+    "endTime": "21:30",
+    "durationMinutes": 90,
+    "notes": "ref, reactive, computed"
+  },
+  {
+    "id": 5,
+    "subject": "Math",
+    "topic": "Algebra",
+    "date": "2025-01-07",
+    "startTime": "08:00",
+    "endTime": "08:50",
+    "durationMinutes": 50,
+    "notes": "Linear equations"
+  },
+  {
+    "id": 6,
+    "subject": "Go",
+    "topic": "Basic Syntax",
+    "date": "2025-01-07",
+    "startTime": "19:00",
+    "endTime": "20:00",
+    "durationMinutes": 60,
+    "notes": "Variables, loops, functions"
+  },
+  {
+    "id": 7,
+    "subject": "English",
+    "topic": "Speaking Practice",
+    "date": "2025-01-08",
+    "startTime": "07:00",
+    "endTime": "07:30",
+    "durationMinutes": 30,
+    "notes": "Shadowing method"
+  },
+  {
+    "id": 8,
+    "subject": "React",
+    "topic": "Hooks",
+    "date": "2025-01-08",
+    "startTime": "21:00",
+    "endTime": "22:15",
+    "durationMinutes": 75,
+    "notes": "useState & useEffect"
+  },
+  {
+    "id": 9,
+    "subject": "German",
+    "topic": "Basic Vocabulary",
+    "date": "2025-01-09",
+    "startTime": "06:45",
+    "endTime": "07:20",
+    "durationMinutes": 35,
+    "notes": "Greetings and numbers"
+  },
+  {
+    "id": 10,
+    "subject": "System Design",
+    "topic": "REST API Basics",
+    "date": "2025-01-09",
+    "startTime": "20:00",
+    "endTime": "21:00",
+    "durationMinutes": 60,
+    "notes": "HTTP methods and status codes"
+  }
+]

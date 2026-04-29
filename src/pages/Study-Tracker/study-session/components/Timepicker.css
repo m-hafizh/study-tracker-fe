@@ -1,0 +1,43 @@
+clock-timepicker {
+    display: block;
+    width: 100%;
+
+	--clock-timepicker-accent-color: #0d9488;
+    --clock-timepicker-popup-background: var(--chakra-colors-gray-800);
+}
+
+clock-timepicker > input {
+    /* width: 100% !important;
+    border: 1px solid var(--chakra-colors-gray-300);
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 1rem;
+    color: var(--chakra-colors-gray-800);
+    background-color: var(--chakra-colors-white);
+    cursor: pointer; */
+
+    width: 100% !important;
+    min-width: var(--input-height);
+    outline: 0;
+    position: relative;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
+    text-align: start;
+    border-radius: var(--chakra-radii-l2);
+    height: var(--input-height);
+    --focus-color: var(--chakra-colors-color-palette-focus-ring);
+    --error-color: var(--chakra-colors-border-error);
+    font-size: var(--chakra-font-sizes-sm);
+    line-height: 1.25rem;
+    padding-inline: var(--chakra-spacing-3);
+    --input-height: var(--chakra-sizes-10);
+    background: var(--chakra-colors-transparent);
+    --bg-currentcolor: var(--chakra-colors-transparent);
+    border-width: 1px;
+    border-color: var(--chakra-colors-border);
+    --focus-ring-color: var(--focus-color);
+}
