@@ -48,20 +48,39 @@ jobs:
       - name: Prepare SSH key
         env:
           HOSTINGER_SSH_PRIVATE_KEY: ${{ secrets.HOSTINGER_SSH_PRIVATE_KEY }}
+          HOSTINGER_SSH_PASSPHRASE: ${{ secrets.HOSTINGER_SSH_PASSPHRASE }}
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
 
-          # Support both multiline keys and keys pasted with literal \n.
+          # Support multiline keys, keys pasted with literal \n, and CRLF line endings.
           if echo "$HOSTINGER_SSH_PRIVATE_KEY" | grep -q '\\n'; then
-            printf '%b' "$HOSTINGER_SSH_PRIVATE_KEY" > ~/.ssh/hostinger_key
+            printf '%b' "$HOSTINGER_SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/hostinger_key
           else
-            printf '%s' "$HOSTINGER_SSH_PRIVATE_KEY" > ~/.ssh/hostinger_key
+            printf '%s' "$HOSTINGER_SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/hostinger_key
           fi
           chmod 600 ~/.ssh/hostinger_key
 
-          if ! ssh-keygen -y -f ~/.ssh/hostinger_key >/dev/null 2>&1; then
-            echo "::error::Invalid HOSTINGER_SSH_PRIVATE_KEY format. Paste the full private key (including BEGIN/END lines) as a multiline GitHub secret."
+          is_valid_key() {
+            ssh-keygen -y -f ~/.ssh/hostinger_key >/dev/null 2>&1
+          }
+
+          # If direct parse fails, try base64-decoding the secret.
+          if ! is_valid_key; then
+            if printf '%s' "$HOSTINGER_SSH_PRIVATE_KEY" | tr -d '\r\n ' | base64 -d > ~/.ssh/hostinger_key 2>/dev/null; then
+              chmod 600 ~/.ssh/hostinger_key
+            fi
+          fi
+
+          # If still invalid and a passphrase exists, attempt to remove passphrase in CI.
+          if ! is_valid_key && [ -n "$HOSTINGER_SSH_PASSPHRASE" ]; then
+            if ssh-keygen -p -P "$HOSTINGER_SSH_PASSPHRASE" -N "" -f ~/.ssh/hostinger_key >/dev/null 2>&1; then
+              chmod 600 ~/.ssh/hostinger_key
+            fi
+          fi
+
+          if ! is_valid_key; then
+            echo "::error::Invalid HOSTINGER_SSH_PRIVATE_KEY. Accepted formats: raw multiline key, key with literal \\n, or base64-encoded private key. If encrypted, set HOSTINGER_SSH_PASSPHRASE."
             exit 1
           fi
 
