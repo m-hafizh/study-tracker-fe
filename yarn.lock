@@ -3724,7 +3724,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^19.0.10":
+"@types/react-is@npm:^19":
+  version: 19.2.0
+  resolution: "@types/react-is@npm:19.2.0"
+  dependencies:
+    "@types/react": "npm:*"
+  checksum: 10c0/ff49ac8b8d439c3377e11d2f9f491ed4f8c8ee800225a40093c7941715ca8ccbde1b3833c5435354a8e39305fd0a163019d97f033c9402bc4b46f515851d2290
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:*, @types/react@npm:^19.0.10":
   version: 19.2.14
   resolution: "@types/react@npm:19.2.14"
   dependencies:
@@ -7379,6 +7388,7 @@ __metadata:
     "@types/node": "npm:^22.13.17"
     "@types/react": "npm:^19.0.10"
     "@types/react-dom": "npm:^19.0.4"
+    "@types/react-is": "npm:^19"
     "@vitejs/plugin-react": "npm:^4.3.4"
     axios: "npm:^1.10.0"
     class-variance-authority: "npm:^0.7.1"
@@ -7398,12 +7408,13 @@ __metadata:
     motion: "npm:^12.23.24"
     next-themes: "npm:^0.4.6"
     radix-ui: "npm:^1.4.3"
-    react: "npm:19.0.1"
+    react: "npm:19.2.5"
     react-cropper: "npm:^2.3.3"
     react-day-picker: "npm:^9.11.0"
-    react-dom: "npm:^19.0.1"
+    react-dom: "npm:19.2.5"
     react-hook-form: "npm:^7.64.0"
     react-icons: "npm:^5.5.0"
+    react-is: "npm:^19.2.0"
     react-number-format: "npm:^5.4.4"
     react-router-dom: "npm:^7.4.1"
     recharts: "npm:3.6.0"
@@ -7653,7 +7664,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^19.0.1":
+"react-dom@npm:19.2.5":
   version: 19.2.5
   resolution: "react-dom@npm:19.2.5"
   dependencies:
@@ -7679,6 +7690,13 @@ __metadata:
   peerDependencies:
     react: "*"
   checksum: 10c0/addba1ebfd45cdf7f69291d0c93df64fca1271cfdb66df657abd223e3451c73356b035f50e75858627dd182b02129596c79eaaaa45d32eb52658e443a992645c
+  languageName: node
+  linkType: hard
+
+"react-is@npm:^19.2.0":
+  version: 19.2.5
+  resolution: "react-is@npm:19.2.5"
+  checksum: 10c0/58c28ab2f7f868f9836c728fa164a16dcf20246ab84a3ae6a09e617b0e4d9bbb3acdddfdc40452f0134d27b121d3359227602a050c0be554cb20069cb52a67f4
   languageName: node
   linkType: hard
 
@@ -7797,10 +7815,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:19.0.1":
-  version: 19.0.1
-  resolution: "react@npm:19.0.1"
-  checksum: 10c0/bc2e2e86ea4e67235f1adb329363bf1c998b3fed0842116614cbef6ae162d0a70227eda4cfed6d28cb95b2ad8b507a0894ed9af26f7f6cd635797585be2fb16c
+"react@npm:19.2.5":
+  version: 19.2.5
+  resolution: "react@npm:19.2.5"
+  checksum: 10c0/4b5f231dbef92886f602533c9ce3bde04d99f0e71dfb5d794c43e02726efaad0421c08688f75fc98a6d6e1dc017372e1af7abbfecdc86a79968f461675931a7a
   languageName: node
   linkType: hard
 
