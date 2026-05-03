@@ -53,34 +53,63 @@ jobs:
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
 
-          # Support multiline keys, keys pasted with literal \n, and CRLF line endings.
-          if echo "$HOSTINGER_SSH_PRIVATE_KEY" | grep -q '\\n'; then
-            printf '%b' "$HOSTINGER_SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/hostinger_key
-          else
-            printf '%s' "$HOSTINGER_SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/hostinger_key
+          raw_key="$HOSTINGER_SSH_PRIVATE_KEY"
+
+          if [ -z "${raw_key//[[:space:]]/}" ]; then
+            echo "::error::HOSTINGER_SSH_PRIVATE_KEY is empty or missing. Set it in repository Actions secrets."
+            exit 1
           fi
-          chmod 600 ~/.ssh/hostinger_key
+
+          # Remove accidental wrapping quotes when the key was pasted as a JSON/string literal.
+          if [[ "$raw_key" == \"*\" ]]; then
+            raw_key="${raw_key#\"}"
+            raw_key="${raw_key%\"}"
+          elif [[ "$raw_key" == \'*\' ]]; then
+            raw_key="${raw_key#\'}"
+            raw_key="${raw_key%\'}"
+          fi
+
+          if echo "$raw_key" | grep -Eq '^(ssh-(rsa|ed25519)|ecdsa-sha2-)'; then
+            echo "::error::HOSTINGER_SSH_PRIVATE_KEY looks like a public key. Use the PRIVATE key (BEGIN ... PRIVATE KEY), not .pub."
+            exit 1
+          fi
+
+          write_key_raw() {
+            printf '%s' "$raw_key" | tr -d '\r' > ~/.ssh/hostinger_key
+          }
+
+          write_key_escaped() {
+            printf '%b' "$raw_key" | tr -d '\r' > ~/.ssh/hostinger_key
+          }
+
+          write_key_base64() {
+            printf '%s' "$raw_key" | tr -d '\r\n\t ' | base64 -d > ~/.ssh/hostinger_key
+          }
 
           is_valid_key() {
             ssh-keygen -y -f ~/.ssh/hostinger_key >/dev/null 2>&1
           }
 
-          # If direct parse fails, try base64-decoding the secret.
+          if echo "$raw_key" | grep -q '\\n'; then
+            write_key_escaped
+          else
+            write_key_raw
+          fi
+          chmod 600 ~/.ssh/hostinger_key
+
           if ! is_valid_key; then
-            if printf '%s' "$HOSTINGER_SSH_PRIVATE_KEY" | tr -d '\r\n ' | base64 -d > ~/.ssh/hostinger_key 2>/dev/null; then
-              chmod 600 ~/.ssh/hostinger_key
-            fi
+            write_key_base64 >/dev/null 2>&1 || true
+            chmod 600 ~/.ssh/hostinger_key
           fi
 
-          # If still invalid and a passphrase exists, attempt to remove passphrase in CI.
           if ! is_valid_key && [ -n "$HOSTINGER_SSH_PASSPHRASE" ]; then
-            if ssh-keygen -p -P "$HOSTINGER_SSH_PASSPHRASE" -N "" -f ~/.ssh/hostinger_key >/dev/null 2>&1; then
-              chmod 600 ~/.ssh/hostinger_key
-            fi
+            ssh-keygen -p -P "$HOSTINGER_SSH_PASSPHRASE" -N "" -f ~/.ssh/hostinger_key >/dev/null 2>&1 || true
+            chmod 600 ~/.ssh/hostinger_key
           fi
 
           if ! is_valid_key; then
-            echo "::error::Invalid HOSTINGER_SSH_PRIVATE_KEY. Accepted formats: raw multiline key, key with literal \\n, or base64-encoded private key. If encrypted, set HOSTINGER_SSH_PASSPHRASE."
+            echo "::error::Cannot parse HOSTINGER_SSH_PRIVATE_KEY as a valid private key. Use one of: (1) raw multiline private key, (2) same key with literal \\n, or (3) base64 of private key text."
+            echo "::error::Fundamental check: the matching public key must already be in ~/.ssh/authorized_keys on Hostinger for HOSTINGER_SSH_USER."
             exit 1
           fi
 
