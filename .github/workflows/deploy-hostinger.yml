@@ -45,29 +45,50 @@ jobs:
           RewriteRule . /index.html [L]
           EOF
 
+      - name: Prepare SSH key
+        env:
+          HOSTINGER_SSH_PRIVATE_KEY: ${{ secrets.HOSTINGER_SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+          # Support both multiline keys and keys pasted with literal \n.
+          if echo "$HOSTINGER_SSH_PRIVATE_KEY" | grep -q '\\n'; then
+            printf '%b' "$HOSTINGER_SSH_PRIVATE_KEY" > ~/.ssh/hostinger_key
+          else
+            printf '%s' "$HOSTINGER_SSH_PRIVATE_KEY" > ~/.ssh/hostinger_key
+          fi
+          chmod 600 ~/.ssh/hostinger_key
+
+          if ! ssh-keygen -y -f ~/.ssh/hostinger_key >/dev/null 2>&1; then
+            echo "::error::Invalid HOSTINGER_SSH_PRIVATE_KEY format. Paste the full private key (including BEGIN/END lines) as a multiline GitHub secret."
+            exit 1
+          fi
+
       - name: SSH preflight check
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.HOSTINGER_SSH_HOST }}
-          username: ${{ secrets.HOSTINGER_SSH_USER }}
-          key: ${{ secrets.HOSTINGER_SSH_PRIVATE_KEY }}
-          passphrase: ${{ secrets.HOSTINGER_SSH_PASSPHRASE }}
-          port: ${{ secrets.HOSTINGER_SSH_PORT }}
-          script: |
-            whoami
-            pwd
-            mkdir -p "${{ secrets.HOSTINGER_DEPLOY_PATH }}"
+        env:
+          HOSTINGER_SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
+          HOSTINGER_SSH_USER: ${{ secrets.HOSTINGER_SSH_USER }}
+          HOSTINGER_SSH_PORT: ${{ secrets.HOSTINGER_SSH_PORT }}
+          HOSTINGER_DEPLOY_PATH: ${{ secrets.HOSTINGER_DEPLOY_PATH }}
+        run: |
+          ssh-keyscan -p "$HOSTINGER_SSH_PORT" -H "$HOSTINGER_SSH_HOST" >> ~/.ssh/known_hosts
+
+          ssh \
+            -i ~/.ssh/hostinger_key \
+            -o StrictHostKeyChecking=yes \
+            -p "$HOSTINGER_SSH_PORT" \
+            "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" \
+            "whoami && pwd && mkdir -p '$HOSTINGER_DEPLOY_PATH'"
 
       - name: Deploy dist to Hostinger
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.HOSTINGER_SSH_HOST }}
-          username: ${{ secrets.HOSTINGER_SSH_USER }}
-          key: ${{ secrets.HOSTINGER_SSH_PRIVATE_KEY }}
-          passphrase: ${{ secrets.HOSTINGER_SSH_PASSPHRASE }}
-          port: ${{ secrets.HOSTINGER_SSH_PORT }}
-          source: "dist/*"
-          target: ${{ secrets.HOSTINGER_DEPLOY_PATH }}
-          strip_components: 1
-          rm: true
-          overwrite: true
+        env:
+          HOSTINGER_SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
+          HOSTINGER_SSH_USER: ${{ secrets.HOSTINGER_SSH_USER }}
+          HOSTINGER_SSH_PORT: ${{ secrets.HOSTINGER_SSH_PORT }}
+          HOSTINGER_DEPLOY_PATH: ${{ secrets.HOSTINGER_DEPLOY_PATH }}
+        run: |
+          rsync -az --delete \
+            -e "ssh -i ~/.ssh/hostinger_key -o StrictHostKeyChecking=yes -p $HOSTINGER_SSH_PORT" \
+            dist/ \
+            "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST:$HOSTINGER_DEPLOY_PATH/"
