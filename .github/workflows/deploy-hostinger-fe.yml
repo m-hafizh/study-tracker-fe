@@ -28,7 +28,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: "20"
           cache: pnpm
           cache-dependency-path: fe/pnpm-lock.yaml
 
@@ -59,12 +59,12 @@ jobs:
       - name: Deploy FE artifact on Hostinger
         uses: appleboy/ssh-action@v1.0.3
         env:
-          HOSTINGER_FE_PATH: ${{ secrets.HOSTINGER_FE_PATH }}
+          HOSTINGER_DEPLOY_PATH: ${{ secrets.HOSTINGER_DEPLOY_PATH }}
         with:
           host: ${{ secrets.HOSTINGER_HOST }}
           username: ${{ secrets.HOSTINGER_USERNAME }}
           key: ${{ secrets.HOSTINGER_SSH_KEY }}
-          envs: HOSTINGER_FE_PATH
+          envs: HOSTINGER_DEPLOY_PATH
           script_stop: true
           script: |
             set -euo pipefail
@@ -76,15 +76,15 @@ jobs:
               exit 1
             fi
 
-            if [ -z "${HOSTINGER_FE_PATH:-}" ]; then
-              echo "HOSTINGER_FE_PATH is empty"
+            if [ -z "${HOSTINGER_DEPLOY_PATH:-}" ]; then
+              echo "HOSTINGER_DEPLOY_PATH is empty"
               exit 1
             fi
 
-            mkdir -p "$HOSTINGER_FE_PATH"
+            mkdir -p "$HOSTINGER_DEPLOY_PATH"
 
             # Remove old static files before publishing new build.
-            find "$HOSTINGER_FE_PATH" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+            find "$HOSTINGER_DEPLOY_PATH" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
 
-            tar -xzf "$RELEASE_FILE" -C "$HOSTINGER_FE_PATH"
+            tar -xzf "$RELEASE_FILE" -C "$HOSTINGER_DEPLOY_PATH"
             rm -f "$RELEASE_FILE"
