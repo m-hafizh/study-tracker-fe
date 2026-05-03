@@ -28,6 +28,12 @@ export default defineConfig({
       exclude: ['**/*.test.tsx', '**/*.spec.tsx', '**/tests/**']
     })
   ],
+  optimizeDeps: {
+    // These are used inside lazy-loaded Study Tracker routes.
+    // Pre-bundling them on server start prevents late optimizer invalidation
+    // that can surface as "Outdated Optimize Dep" during first navigation.
+    include: ['recharts', 'motion/react'],
+  },
   // server: {
   //   port: 3000,
   // },
