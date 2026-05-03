@@ -1,0 +1,39 @@
+name: Sync main to dev and prod
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync-branches:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target_branch:
+          - dev
+          - prod
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure git author
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Merge main into ${{ matrix.target_branch }}
+        run: |
+          set -euo pipefail
+
+          git fetch origin main "${{ matrix.target_branch }}"
+          git checkout "${{ matrix.target_branch }}"
+          git merge --no-ff "origin/main" -m "chore: sync main into ${{ matrix.target_branch }}"
+          git push origin "HEAD:${{ matrix.target_branch }}"
