@@ -37,7 +37,7 @@ jobs:
 
           git fetch origin main "${{ matrix.target_branch }}"
           git checkout "${{ matrix.target_branch }}"
-          if ! git merge --no-ff "origin/main" -m "chore: sync main into ${{ matrix.target_branch }}"; then
+          if ! git merge --no-ff "origin/main" -m "merge: sync main into ${{ matrix.target_branch }}"; then
             echo "has_conflict=true" >> "$GITHUB_OUTPUT"
             exit 1
           fi
