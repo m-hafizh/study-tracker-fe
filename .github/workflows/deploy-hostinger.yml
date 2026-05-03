@@ -126,8 +126,16 @@ jobs:
               exit 0
             fi
 
+            # If the "private key" secret looks like a single-line token, it may actually be the SSH password.
+            if ! echo "$raw_key" | grep -q 'BEGIN .*PRIVATE KEY' && ! echo "$raw_key" | grep -q $'\n'; then
+              echo "::warning::HOSTINGER_SSH_PRIVATE_KEY is not a key; treating it as SSH password fallback."
+              echo "HOSTINGER_SSH_PASSWORD_FALLBACK=$raw_key" >> "$GITHUB_ENV"
+              echo "AUTH_METHOD=password" >> "$GITHUB_ENV"
+              exit 0
+            fi
+
             echo "::error::Cannot parse HOSTINGER_SSH_PRIVATE_KEY as a valid private key. Use one of: (1) raw multiline private key, (2) same key with literal \\n, or (3) base64 of private key text."
-            echo "::error::Fundamental check: the matching public key must already be in ~/.ssh/authorized_keys on Hostinger for HOSTINGER_SSH_USER."
+            echo "::error::Fallback unavailable because HOSTINGER_SSH_PASSWORD is empty. Set HOSTINGER_SSH_PASSWORD (or move password value there)."
             exit 1
           fi
 
@@ -149,8 +157,13 @@ jobs:
         run: |
           ssh-keyscan -p "$HOSTINGER_SSH_PORT" -H "$HOSTINGER_SSH_HOST" >> ~/.ssh/known_hosts
 
+          auth_password="$HOSTINGER_SSH_PASSWORD"
+          if [ -z "$auth_password" ] && [ -n "$HOSTINGER_SSH_PASSWORD_FALLBACK" ]; then
+            auth_password="$HOSTINGER_SSH_PASSWORD_FALLBACK"
+          fi
+
           if [ "$AUTH_METHOD" = "password" ]; then
-            sshpass -p "$HOSTINGER_SSH_PASSWORD" ssh \
+            sshpass -p "$auth_password" ssh \
               -o StrictHostKeyChecking=yes \
               -p "$HOSTINGER_SSH_PORT" \
               "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" \
@@ -172,8 +185,13 @@ jobs:
           HOSTINGER_DEPLOY_PATH: ${{ secrets.HOSTINGER_DEPLOY_PATH }}
           HOSTINGER_SSH_PASSWORD: ${{ secrets.HOSTINGER_SSH_PASSWORD }}
         run: |
+          auth_password="$HOSTINGER_SSH_PASSWORD"
+          if [ -z "$auth_password" ] && [ -n "$HOSTINGER_SSH_PASSWORD_FALLBACK" ]; then
+            auth_password="$HOSTINGER_SSH_PASSWORD_FALLBACK"
+          fi
+
           if [ "$AUTH_METHOD" = "password" ]; then
-            sshpass -p "$HOSTINGER_SSH_PASSWORD" rsync -az --delete \
+            sshpass -p "$auth_password" rsync -az --delete \
               -e "ssh -o StrictHostKeyChecking=yes -p $HOSTINGER_SSH_PORT" \
               dist/ \
               "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST:$HOSTINGER_DEPLOY_PATH/"
