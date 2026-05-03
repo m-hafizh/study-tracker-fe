@@ -1,6 +1,6 @@
 # Scaffolding
 
-npm create vite@latest [nama folder project kalian] -- --template react-ts
+yarn create vite [nama folder project kalian] --template react-ts
 
 ============================================================================
 
@@ -17,7 +17,7 @@ npm create vite@latest [nama folder project kalian] -- --template react-ts
 # Install Tailwindcss
 
 1.
-npm install tailwindcss @tailwindcss/vite
+yarn add tailwindcss @tailwindcss/vite
 
 2.
 <----------------------------------------------->
@@ -46,10 +46,10 @@ https://tailwindcss.com/docs/installation/using-vite
 # Install Shadcn UI (+ Tailwindcss)
 
 1.
-pnpm create vite@latest
+yarn create vite
 
 2.
-pnpm add tailwindcss @tailwindcss/vite
+yarn add tailwindcss @tailwindcss/vite
 
 3.
 @import "tailwindcss";
@@ -140,7 +140,7 @@ src/hooks/todos/useGetTodos.ts
 
 ### Set Auto-Import ##
 
-1. pnpm add unplugin-auto-import react-router-dom
+1. yarn add unplugin-auto-import react-router-dom
 2. open vite.config.ts
 3. add this code:
 
@@ -164,7 +164,7 @@ export default defineConfig({
 
 ## Set Routes Based-on Directory (like Next.js) ##
 
-1. pnpm add vite-plugin-pages
+1. yarn add vite-plugin-pages
 
 2. open vite.config.ts, update code:
 
@@ -229,10 +229,10 @@ export default function BlogPost() {
 ====================================================================
 
 # install chakra ui charts
-pnpm add @chakra-ui/charts recharts@^3
+yarn add @chakra-ui/charts recharts@^3
 
 # install react-cropper cropperjs
-pnpm add react-cropper cropperjs
+yarn add react-cropper cropperjs
 
 # download css
 1. open https://react-cropper.github.io/react-cropper/

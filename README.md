@@ -68,21 +68,21 @@ Configured via Vite env variables (see `src/configs/api.config.ts`):
 ## Scripts
 
 ```bash
-npm run dev
-npm run build
-npm run test
-npm run lint
-npm run preview
+yarn dev
+yarn build
+yarn test
+yarn lint
+yarn preview
 ```
 
 ## Local run
 
 ```bash
 # install deps
-npm install
+yarn install
 
 # run app
-npm run dev
+yarn dev
 ```
 
 App default: `http://localhost:5173`

@@ -1,7 +1,6 @@
 // docs: 
-// 1. https://www.jsdelivr.com/package/npm/clock-timepicker
-// 2. https://plugins.slyweb.ch/clock-timepicker/#examples
-// 3. https://github.com/loebi-ch/clock-timepicker
+// 1. https://plugins.slyweb.ch/clock-timepicker/#examples
+// 2. https://github.com/loebi-ch/clock-timepicker
 
 import 'clock-timepicker';
 import './Timepicker.css'
