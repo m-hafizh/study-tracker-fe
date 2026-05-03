@@ -49,6 +49,7 @@ jobs:
         env:
           HOSTINGER_SSH_PRIVATE_KEY: ${{ secrets.HOSTINGER_SSH_PRIVATE_KEY }}
           HOSTINGER_SSH_PASSPHRASE: ${{ secrets.HOSTINGER_SSH_PASSPHRASE }}
+          HOSTINGER_SSH_PASSWORD: ${{ secrets.HOSTINGER_SSH_PASSWORD }}
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
@@ -56,7 +57,12 @@ jobs:
           raw_key="$HOSTINGER_SSH_PRIVATE_KEY"
 
           if [ -z "${raw_key//[[:space:]]/}" ]; then
-            echo "::error::HOSTINGER_SSH_PRIVATE_KEY is empty or missing. Set it in repository Actions secrets."
+            if [ -n "$HOSTINGER_SSH_PASSWORD" ]; then
+              echo "AUTH_METHOD=password" >> "$GITHUB_ENV"
+              exit 0
+            fi
+
+            echo "::error::HOSTINGER_SSH_PRIVATE_KEY is empty/missing and HOSTINGER_SSH_PASSWORD is not set. Configure at least one auth method."
             exit 1
           fi
 
@@ -70,6 +76,12 @@ jobs:
           fi
 
           if echo "$raw_key" | grep -Eq '^(ssh-(rsa|ed25519)|ecdsa-sha2-)'; then
+            if [ -n "$HOSTINGER_SSH_PASSWORD" ]; then
+              echo "::warning::HOSTINGER_SSH_PRIVATE_KEY looks like a public key; falling back to password auth."
+              echo "AUTH_METHOD=password" >> "$GITHUB_ENV"
+              exit 0
+            fi
+
             echo "::error::HOSTINGER_SSH_PRIVATE_KEY looks like a public key. Use the PRIVATE key (BEGIN ... PRIVATE KEY), not .pub."
             exit 1
           fi
@@ -108,10 +120,24 @@ jobs:
           fi
 
           if ! is_valid_key; then
+            if [ -n "$HOSTINGER_SSH_PASSWORD" ]; then
+              echo "::warning::Cannot parse HOSTINGER_SSH_PRIVATE_KEY; falling back to password auth."
+              echo "AUTH_METHOD=password" >> "$GITHUB_ENV"
+              exit 0
+            fi
+
             echo "::error::Cannot parse HOSTINGER_SSH_PRIVATE_KEY as a valid private key. Use one of: (1) raw multiline private key, (2) same key with literal \\n, or (3) base64 of private key text."
             echo "::error::Fundamental check: the matching public key must already be in ~/.ssh/authorized_keys on Hostinger for HOSTINGER_SSH_USER."
             exit 1
           fi
+
+          echo "AUTH_METHOD=key" >> "$GITHUB_ENV"
+
+      - name: Install sshpass (password auth)
+        if: env.AUTH_METHOD == 'password'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y sshpass
 
       - name: SSH preflight check
         env:
@@ -119,15 +145,24 @@ jobs:
           HOSTINGER_SSH_USER: ${{ secrets.HOSTINGER_SSH_USER }}
           HOSTINGER_SSH_PORT: ${{ secrets.HOSTINGER_SSH_PORT }}
           HOSTINGER_DEPLOY_PATH: ${{ secrets.HOSTINGER_DEPLOY_PATH }}
+          HOSTINGER_SSH_PASSWORD: ${{ secrets.HOSTINGER_SSH_PASSWORD }}
         run: |
           ssh-keyscan -p "$HOSTINGER_SSH_PORT" -H "$HOSTINGER_SSH_HOST" >> ~/.ssh/known_hosts
 
-          ssh \
-            -i ~/.ssh/hostinger_key \
-            -o StrictHostKeyChecking=yes \
-            -p "$HOSTINGER_SSH_PORT" \
-            "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" \
-            "whoami && pwd && mkdir -p '$HOSTINGER_DEPLOY_PATH'"
+          if [ "$AUTH_METHOD" = "password" ]; then
+            sshpass -p "$HOSTINGER_SSH_PASSWORD" ssh \
+              -o StrictHostKeyChecking=yes \
+              -p "$HOSTINGER_SSH_PORT" \
+              "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" \
+              "whoami && pwd && mkdir -p '$HOSTINGER_DEPLOY_PATH'"
+          else
+            ssh \
+              -i ~/.ssh/hostinger_key \
+              -o StrictHostKeyChecking=yes \
+              -p "$HOSTINGER_SSH_PORT" \
+              "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" \
+              "whoami && pwd && mkdir -p '$HOSTINGER_DEPLOY_PATH'"
+          fi
 
       - name: Deploy dist to Hostinger
         env:
@@ -135,8 +170,16 @@ jobs:
           HOSTINGER_SSH_USER: ${{ secrets.HOSTINGER_SSH_USER }}
           HOSTINGER_SSH_PORT: ${{ secrets.HOSTINGER_SSH_PORT }}
           HOSTINGER_DEPLOY_PATH: ${{ secrets.HOSTINGER_DEPLOY_PATH }}
+          HOSTINGER_SSH_PASSWORD: ${{ secrets.HOSTINGER_SSH_PASSWORD }}
         run: |
-          rsync -az --delete \
-            -e "ssh -i ~/.ssh/hostinger_key -o StrictHostKeyChecking=yes -p $HOSTINGER_SSH_PORT" \
-            dist/ \
-            "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST:$HOSTINGER_DEPLOY_PATH/"
+          if [ "$AUTH_METHOD" = "password" ]; then
+            sshpass -p "$HOSTINGER_SSH_PASSWORD" rsync -az --delete \
+              -e "ssh -o StrictHostKeyChecking=yes -p $HOSTINGER_SSH_PORT" \
+              dist/ \
+              "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST:$HOSTINGER_DEPLOY_PATH/"
+          else
+            rsync -az --delete \
+              -e "ssh -i ~/.ssh/hostinger_key -o StrictHostKeyChecking=yes -p $HOSTINGER_SSH_PORT" \
+              dist/ \
+              "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST:$HOSTINGER_DEPLOY_PATH/"
+          fi
