@@ -64,7 +64,7 @@
 | **Icons** | Tabler Icons, Lucide React, React Icons |
 | **Animation** | Motion (Framer Motion) |
 | **Linting** | ESLint 9 + TypeScript ESLint + Prettier |
-| **Package Manager** | pnpm |
+| **Package Manager** | yarn |
 
 ---
 
@@ -125,7 +125,7 @@ study-tracker/
 ├── vite.config.ts              # Vite plugins: Tailwind, React, SVGR, AutoImport, Pages
 ├── tsconfig.json               # Path alias: @/* → ./src/*
 ├── package.json
-└── pnpm-lock.yaml
+└── yarn.lock
 ```
 
 ---
@@ -308,8 +308,8 @@ Three `.env` files support different modes:
 | File | `VITE_BASE_API_URL` | Notes |
 |---|---|---|
 | `.env` | `http://localhost:8080` | Default |
-| `.env.development` | `http://localhost:8080` | `pnpm dev` |
-| `.env.production` | `https://localhost:8081` | `pnpm prod` / `pnpm build` |
+| `.env.development` | `http://localhost:8080` | `yarn dev` |
+| `.env.production` | `https://localhost:8081` | `yarn prod` / `yarn build` |
 
 Both files also define `VITE_PRIVATE_API_KEY`.
 
@@ -318,11 +318,11 @@ Both files also define `VITE_PRIVATE_API_KEY`.
 ## Scripts
 
 ```bash
-pnpm dev        # Start dev server (development mode)
-pnpm prod       # Start dev server (production mode)
-pnpm build      # Type-check + production build
-pnpm lint       # Run ESLint
-pnpm preview    # Preview production build locally
+yarn dev        # Start dev server (development mode)
+yarn prod       # Start dev server (production mode)
+yarn build      # Type-check + production build
+yarn lint       # Run ESLint
+yarn preview    # Preview production build locally
 ```
 
 ---
@@ -331,10 +331,10 @@ pnpm preview    # Preview production build locally
 
 ```bash
 # 1. Install dependencies
-pnpm install
+yarn install
 
 # 2. Start the development server
-pnpm dev
+yarn dev
 
 # 3. Open in browser
 #    → http://localhost:5173
