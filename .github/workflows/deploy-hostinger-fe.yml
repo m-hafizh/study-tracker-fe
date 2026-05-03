@@ -1,0 +1,90 @@
+name: Deploy FE to Hostinger
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - fe/**
+      - .github/workflows/deploy-hostinger-fe.yml
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-hostinger-fe
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: fe
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+          cache-dependency-path: fe/pnpm-lock.yaml
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build FE
+        run: pnpm build
+
+      - name: Create deployment artifact
+        run: tar -czf release.tar.gz dist
+
+      - name: Upload artifact to Hostinger
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOSTINGER_HOST }}
+          username: ${{ secrets.HOSTINGER_USERNAME }}
+          key: ${{ secrets.HOSTINGER_SSH_KEY }}
+          source: fe/release.tar.gz
+          target: "~/"
+
+      - name: Deploy FE artifact on Hostinger
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          HOSTINGER_FE_PATH: ${{ secrets.HOSTINGER_FE_PATH }}
+        with:
+          host: ${{ secrets.HOSTINGER_HOST }}
+          username: ${{ secrets.HOSTINGER_USERNAME }}
+          key: ${{ secrets.HOSTINGER_SSH_KEY }}
+          envs: HOSTINGER_FE_PATH
+          script_stop: true
+          script: |
+            set -euo pipefail
+
+            RELEASE_FILE="$HOME/release.tar.gz"
+
+            if [ ! -f "$RELEASE_FILE" ]; then
+              echo "Release artifact not found at $RELEASE_FILE"
+              exit 1
+            fi
+
+            if [ -z "${HOSTINGER_FE_PATH:-}" ]; then
+              echo "HOSTINGER_FE_PATH is empty"
+              exit 1
+            fi
+
+            mkdir -p "$HOSTINGER_FE_PATH"
+
+            # Remove old static files before publishing new build.
+            find "$HOSTINGER_FE_PATH" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+
+            tar -xzf "$RELEASE_FILE" -C "$HOSTINGER_FE_PATH"
+            rm -f "$RELEASE_FILE"
