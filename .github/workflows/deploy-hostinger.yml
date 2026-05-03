@@ -45,12 +45,26 @@ jobs:
           RewriteRule . /index.html [L]
           EOF
 
+      - name: SSH preflight check
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOSTINGER_SSH_HOST }}
+          username: ${{ secrets.HOSTINGER_SSH_USER }}
+          key: ${{ secrets.HOSTINGER_SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.HOSTINGER_SSH_PASSPHRASE }}
+          port: ${{ secrets.HOSTINGER_SSH_PORT }}
+          script: |
+            whoami
+            pwd
+            mkdir -p "${{ secrets.HOSTINGER_DEPLOY_PATH }}"
+
       - name: Deploy dist to Hostinger
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.HOSTINGER_SSH_HOST }}
           username: ${{ secrets.HOSTINGER_SSH_USER }}
           key: ${{ secrets.HOSTINGER_SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.HOSTINGER_SSH_PASSPHRASE }}
           port: ${{ secrets.HOSTINGER_SSH_PORT }}
           source: "dist/*"
           target: ${{ secrets.HOSTINGER_DEPLOY_PATH }}
