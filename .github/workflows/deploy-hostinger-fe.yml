@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - fe/**
+      - "**"
       - .github/workflows/deploy-hostinger-fe.yml
   workflow_dispatch:
 
@@ -19,24 +19,24 @@ jobs:
 
     defaults:
       run:
-        working-directory: fe
+        working-directory: .
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: pnpm
-          cache-dependency-path: fe/pnpm-lock.yaml
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 10
           run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -53,7 +53,7 @@ jobs:
           host: ${{ secrets.HOSTINGER_SSH_HOST }}
           username: ${{ secrets.HOSTINGER_SSH_USER }}
           key: ${{ secrets.HOSTINGER_SSH_PRIVATE_KEY }}
-          source: fe/release.tar.gz
+          source: release.tar.gz
           target: "~/"
 
       - name: Deploy FE artifact on Hostinger
