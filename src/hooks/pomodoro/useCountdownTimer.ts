@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 export function useCountdownTimer(initialMinutes: number = 10, onComplete?: () => void) {
     const [remainingTime, setRemainingTime] = useState<number>(initialMinutes * 60);
     const [isRunning, setIsRunning] = useState<boolean>(false);
-    const intervalRef = useRef<NodeJS.Timeout | null>(null);
+    const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
     const formatTime = useCallback((seconds: number) => {
         const hrs = Math.floor(seconds / 3600);

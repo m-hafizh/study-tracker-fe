@@ -37,7 +37,7 @@ export function usePomodoroTimer(onFocusComplete?: (minutes: number) => void) {
     const [remainingSeconds, setRemainingSeconds] = useState(config.focusMinutes * 60);
     const [isRunning, setIsRunning] = useState(false);
     const [completedSessions, setCompletedSessions] = useState(0);
-    const intervalRef = useRef<NodeJS.Timeout | null>(null);
+    const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
     // Derived
     const totalSeconds = useMemo(() => {
