@@ -1,12 +1,9 @@
 # Logs
 logs
 *.log
-yarn-debug.log*
-yarn-error.log*
 lerna-debug.log*
 
 node_modules
-.yarn/
 dist
 dist-ssr
 *.local
