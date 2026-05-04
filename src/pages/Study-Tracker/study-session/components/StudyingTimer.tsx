@@ -7,7 +7,7 @@ import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 const capitalize = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
 
 export const StudyingTimer = () => {
-    const timerRef = useRef<NodeJS.Timeout | null>(null);
+    const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const {
         subject,
         topic,
