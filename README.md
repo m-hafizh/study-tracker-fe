@@ -65,24 +65,32 @@ Configured via Vite env variables (see `src/configs/api.config.ts`):
 - `VITE_BASE_API_URL`
 - `VITE_PRIVATE_API_KEY` (optional/private header flow)
 
+## Runtime requirements
+
+- Node.js `v22.12.0`
+- nvm (Node Version Manager)
+
 ## Scripts
 
 ```bash
-yarn dev
-yarn build
-yarn test
-yarn lint
-yarn preview
+pnpm dev
+pnpm build
+pnpm test
+pnpm lint
+pnpm preview
 ```
 
 ## Local run
 
 ```bash
+# switch Node.js runtime
+nvm use v22.12.0
+
 # install deps
-yarn install
+pnpm install
 
 # run app
-yarn dev
+pnpm dev
 ```
 
 App default: `http://localhost:5173`

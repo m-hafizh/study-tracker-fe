@@ -50,6 +50,7 @@
 
 | Category | Technology |
 |---|---|
+| **Runtime** | Node.js 22.12.0 (via nvm) |
 | **Language** | TypeScript (~5.7) |
 | **UI Framework** | React 19 |
 | **Build Tool** | Vite 6 |
@@ -64,7 +65,7 @@
 | **Icons** | Tabler Icons, Lucide React, React Icons |
 | **Animation** | Motion (Framer Motion) |
 | **Linting** | ESLint 9 + TypeScript ESLint + Prettier |
-| **Package Manager** | yarn |
+| **Package Manager** | pnpm |
 
 ---
 
@@ -125,7 +126,7 @@ study-tracker/
 ├── vite.config.ts              # Vite plugins: Tailwind, React, SVGR, AutoImport, Pages
 ├── tsconfig.json               # Path alias: @/* → ./src/*
 ├── package.json
-└── yarn.lock
+└── pnpm-lock.yaml
 ```
 
 ---
@@ -308,8 +309,8 @@ Three `.env` files support different modes:
 | File | `VITE_BASE_API_URL` | Notes |
 |---|---|---|
 | `.env` | `http://localhost:8080` | Default |
-| `.env.development` | `http://localhost:8080` | `yarn dev` |
-| `.env.production` | `https://localhost:8081` | `yarn prod` / `yarn build` |
+| `.env.development` | `http://localhost:8080` | `pnpm dev` |
+| `.env.production` | `https://localhost:8081` | `pnpm prod` / `pnpm build` |
 
 Both files also define `VITE_PRIVATE_API_KEY`.
 
@@ -318,11 +319,11 @@ Both files also define `VITE_PRIVATE_API_KEY`.
 ## Scripts
 
 ```bash
-yarn dev        # Start dev server (development mode)
-yarn prod       # Start dev server (production mode)
-yarn build      # Type-check + production build
-yarn lint       # Run ESLint
-yarn preview    # Preview production build locally
+pnpm dev        # Start dev server (development mode)
+pnpm prod       # Start dev server (production mode)
+pnpm build      # Type-check + production build
+pnpm lint       # Run ESLint
+pnpm preview    # Preview production build locally
 ```
 
 ---
@@ -330,13 +331,16 @@ yarn preview    # Preview production build locally
 ## Getting Started
 
 ```bash
-# 1. Install dependencies
-yarn install
+# 1. Switch to the project Node.js runtime
+nvm use v22.12.0
 
-# 2. Start the development server
-yarn dev
+# 2. Install dependencies
+pnpm install
 
-# 3. Open in browser
+# 3. Start the development server
+pnpm dev
+
+# 4. Open in browser
 #    → http://localhost:5173
 ```
 
