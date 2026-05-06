@@ -95,6 +95,38 @@ pnpm dev
 
 App default: `http://localhost:5173`
 
+## Docker (Compose)
+
+Run from the frontend root:
+
+```bash
+docker compose up --build fe-dev
+```
+
+This starts Vite in a container with hot-reload on `http://localhost:5173`.
+
+Run production profile:
+
+```bash
+docker compose --profile prod up --build fe-prod
+```
+
+This builds the app and serves it with Nginx on `http://localhost:8080`.
+
+Override API target for browser-side API calls (optional):
+
+```bash
+DOCKER_VITE_BASE_API_URL=http://localhost:3003 docker compose up --build fe-dev
+```
+
+On Linux, `host.docker.internal` may not resolve in the browser. Prefer `localhost` (or your host IP).
+
+Stop services:
+
+```bash
+docker compose down
+```
+
 ## Related docs
 
 - `DOCUMENTATION.md` (detailed frontend architecture)
