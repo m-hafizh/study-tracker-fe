@@ -79,12 +79,6 @@ export const StudyingTimer = () => {
     }, [initialSeconds, isTimerActive]);
 
     useEffect(() => {
-        if (!isTimerActive && seconds > 0) {
-            handleResume();
-        }
-    }, [handleResume, isTimerActive, seconds]);
-
-    useEffect(() => {
         return () => {
             if (timerRef.current) clearInterval(timerRef.current);
         };
@@ -99,6 +93,12 @@ export const StudyingTimer = () => {
                     <div className="text-center space-y-1">
                         <CardTitle className="text-2xl font-bold tracking-tight text-foreground">Studying Time</CardTitle>
                         <p className="text-sm text-muted-foreground">Focus mode active.</p>
+                        <p
+                            className={`text-xs font-semibold ${isActive ? "text-emerald-500" : "text-amber-500"}`}
+                            aria-live="polite"
+                        >
+                            Status: {isActive ? "Running" : "Paused"}
+                        </p>
                     </div>
 
                     <div className="bg-muted/30 rounded-2xl p-4 space-y-2 shadow-inner ring-1 ring-inset ring-black/5 dark:ring-white/5">
