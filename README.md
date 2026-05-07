@@ -113,7 +113,15 @@ docker compose --profile prod up --build fe-prod
 
 This builds the app and serves it with Nginx on `http://localhost:8080`.
 
-Override API target for browser-side API calls (optional):
+Default Docker behavior uses same-origin API requests (`/v1`) so browsers never call `localhost:3003` directly.
+
+Override dev proxy target (optional):
+
+```bash
+DOCKER_VITE_DEV_PROXY_TARGET=http://host.docker.internal:3003 docker compose up --build fe-dev
+```
+
+If you explicitly need browser-direct API base URL (optional):
 
 ```bash
 DOCKER_VITE_BASE_API_URL=http://localhost:3003 docker compose up --build fe-dev

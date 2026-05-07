@@ -7,8 +7,10 @@ services:
     ports:
       - "${FE_DEV_PORT:-5173}:5173"
     environment:
-      # This value is used by browser-side code, so default to a host-resolvable URL.
-      VITE_BASE_API_URL: ${DOCKER_VITE_BASE_API_URL:-http://localhost:3003}
+      # Empty base URL means browser uses same-origin /v1 requests.
+      VITE_BASE_API_URL: "${DOCKER_VITE_BASE_API_URL:-}"
+      # Vite dev server proxies /v1 to this backend target.
+      VITE_DEV_PROXY_TARGET: ${DOCKER_VITE_DEV_PROXY_TARGET:-http://host.docker.internal:3003}
       VITE_PRIVATE_API_KEY: ${VITE_PRIVATE_API_KEY:-}
       VITE_ALLOWED_HOSTS: ${DOCKER_VITE_ALLOWED_HOSTS:-localhost,127.0.0.1,srv1632763.hstgr.cloud}
       CHOKIDAR_USEPOLLING: ${CHOKIDAR_USEPOLLING:-true}
@@ -24,7 +26,7 @@ services:
       context: .
       target: prod
       args:
-        VITE_BASE_API_URL: ${DOCKER_VITE_BASE_API_URL:-http://localhost:3003}
+        VITE_BASE_API_URL: "${DOCKER_VITE_BASE_API_URL:-}"
         VITE_PRIVATE_API_KEY: ${VITE_PRIVATE_API_KEY:-}
     image: study-tracker-fe:prod
     ports:
