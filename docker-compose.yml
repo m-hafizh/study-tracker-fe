@@ -10,6 +10,7 @@ services:
       # This value is used by browser-side code, so default to a host-resolvable URL.
       VITE_BASE_API_URL: ${DOCKER_VITE_BASE_API_URL:-http://localhost:3003}
       VITE_PRIVATE_API_KEY: ${VITE_PRIVATE_API_KEY:-}
+      VITE_ALLOWED_HOSTS: ${DOCKER_VITE_ALLOWED_HOSTS:-localhost,127.0.0.1,srv1632763.hstgr.cloud}
       CHOKIDAR_USEPOLLING: ${CHOKIDAR_USEPOLLING:-true}
     volumes:
       - ./:/app

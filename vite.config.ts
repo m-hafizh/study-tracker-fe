@@ -6,6 +6,25 @@ import svgr from 'vite-plugin-svgr';
 import AutoImport from 'unplugin-auto-import/vite'
 import Pages from 'vite-plugin-pages'
 
+const DEFAULT_ALLOWED_HOSTS = [
+  'localhost',
+  '127.0.0.1',
+  'srv1632763.hstgr.cloud',
+];
+
+const parseAllowedHosts = (raw: string | undefined): string[] => {
+  if (!raw?.trim()) return DEFAULT_ALLOWED_HOSTS;
+
+  const parsed = raw
+    .split(',')
+    .map((host) => host.trim())
+    .filter(Boolean);
+
+  return Array.from(new Set([...DEFAULT_ALLOWED_HOSTS, ...parsed]));
+};
+
+const allowedHosts = parseAllowedHosts(process.env.VITE_ALLOWED_HOSTS);
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -34,9 +53,10 @@ export default defineConfig({
     // that can surface as "Outdated Optimize Dep" during first navigation.
     include: ['recharts', 'motion/react'],
   },
-  // server: {
-  //   port: 3000,
-  // },
+  server: {
+    host: '0.0.0.0',
+    allowedHosts,
+  },
   resolve: {
     alias: {
       '@': '/src',
