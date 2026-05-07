@@ -24,6 +24,7 @@ const parseAllowedHosts = (raw: string | undefined): string[] => {
 };
 
 const allowedHosts = parseAllowedHosts(process.env.VITE_ALLOWED_HOSTS);
+const devProxyTarget = process.env.VITE_DEV_PROXY_TARGET?.trim();
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -56,6 +57,15 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     allowedHosts,
+    proxy: devProxyTarget
+      ? {
+          '/v1': {
+            target: devProxyTarget,
+            changeOrigin: true,
+            secure: false,
+          },
+        }
+      : undefined,
   },
   resolve: {
     alias: {
