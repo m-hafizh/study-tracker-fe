@@ -7,6 +7,7 @@ import {
   readKanbanCache,
   writeKanbanCache,
 } from "@/features/workspace/offlineSync";
+import { createUuid } from "@/utils/uuid";
 
 const now = () => new Date().toISOString();
 
@@ -19,14 +20,14 @@ const isNetworkError = (error: unknown) => {
 function seedBoard(): KanbanBoard {
   const timestamp = now();
   return {
-    id: crypto.randomUUID(),
+    id: createUuid(),
     title: "Study Planner",
     createdAt: timestamp,
     updatedAt: timestamp,
     lists: [
-      { id: crypto.randomUUID(), title: "To Do", cards: [], createdAt: timestamp, updatedAt: timestamp },
-      { id: crypto.randomUUID(), title: "In Progress", cards: [], createdAt: timestamp, updatedAt: timestamp },
-      { id: crypto.randomUUID(), title: "Done", cards: [], createdAt: timestamp, updatedAt: timestamp },
+      { id: createUuid(), title: "To Do", cards: [], createdAt: timestamp, updatedAt: timestamp },
+      { id: createUuid(), title: "In Progress", cards: [], createdAt: timestamp, updatedAt: timestamp },
+      { id: createUuid(), title: "Done", cards: [], createdAt: timestamp, updatedAt: timestamp },
     ],
   };
 }
@@ -134,7 +135,7 @@ export const useKanbanStore = create<KanbanState>((set, get) => {
       if (!value) return;
 
       const list: KanbanList = {
-        id: crypto.randomUUID(),
+        id: createUuid(),
         title: value,
         cards: [],
         createdAt: now(),
@@ -223,7 +224,7 @@ export const useKanbanStore = create<KanbanState>((set, get) => {
       if (!title) return;
 
       const card: KanbanCard = {
-        id: crypto.randomUUID(),
+        id: createUuid(),
         title,
         subject: data.subject?.trim() || undefined,
         notes: data.notes?.trim() || undefined,

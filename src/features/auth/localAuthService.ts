@@ -12,6 +12,7 @@ import {
   type UpdateProfileRequest,
   type UpdateProfileResponse,
 } from "@/models/auth";
+import { createUuid } from "@/utils/uuid";
 
 type LocalAuthUserRecord = AuthUser & {
   password: string;
@@ -29,7 +30,7 @@ function makeAuthError(error: AuthErrorResponse): never {
 }
 
 function generateToken(prefix: string) {
-  return `${prefix}_${crypto.randomUUID()}_${Date.now()}`;
+  return `${prefix}_${createUuid()}_${Date.now()}`;
 }
 
 function parseUsers(): LocalAuthUserRecord[] {
@@ -122,7 +123,7 @@ export const localAuthService: AuthGateway = {
 
     const timestamp = now();
     const newUser: LocalAuthUserRecord = {
-      id: crypto.randomUUID(),
+      id: createUuid(),
       name: payload.name.trim(),
       email,
       password: payload.password,
