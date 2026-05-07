@@ -119,6 +119,14 @@ Override API target for browser-side API calls (optional):
 DOCKER_VITE_BASE_API_URL=http://localhost:3003 docker compose up --build fe-dev
 ```
 
+Override Vite dev server allowed hosts (optional):
+
+```bash
+DOCKER_VITE_ALLOWED_HOSTS=localhost,127.0.0.1,srv1632763.hstgr.cloud docker compose up --build fe-dev
+```
+
+This controls `server.allowedHosts` for development only.
+
 On Linux, `host.docker.internal` may not resolve in the browser. Prefer `localhost` (or your host IP).
 
 Stop services:
