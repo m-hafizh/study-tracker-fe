@@ -1,5 +1,5 @@
 services:
-  fe-dev:
+  dev:
     build:
       context: .
       target: dev
@@ -21,7 +21,7 @@ services:
     extra_hosts:
       - host.docker.internal:host-gateway
 
-  fe-prod:
+  prod:
     build:
       context: .
       target: prod

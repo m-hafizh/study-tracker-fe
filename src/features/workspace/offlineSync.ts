@@ -4,6 +4,7 @@ import axios from 'axios';
 import { customAxios } from '@/api';
 import type { NewStudyPlanEvent, StudyPlanEvent } from '@/models/calendar';
 import type { KanbanBoard } from '@/models/kanban';
+import { createUuid } from '@/utils/uuid';
 
 const CALENDAR_CACHE_KEY = 'study-tracker:calendar-events';
 const KANBAN_CACHE_KEY = 'study-tracker:kanban';
@@ -210,7 +211,7 @@ const replaceCalendarId = (sourceId: string, target: StudyPlanEvent): StudyPlanE
 export const createOfflineCalendarEvent = (payload: NewStudyPlanEvent): StudyPlanEvent[] => {
   const nowIso = new Date().toISOString();
   const draft: StudyPlanEvent = {
-    id: `local-event-${crypto.randomUUID()}`,
+    id: `local-event-${createUuid()}`,
     ...payload,
     createdAt: nowIso,
     updatedAt: nowIso,
@@ -218,7 +219,7 @@ export const createOfflineCalendarEvent = (payload: NewStudyPlanEvent): StudyPla
 
   const items = upsertCalendar(draft);
   appendOutbox({
-    id: crypto.randomUUID(),
+    id: createUuid(),
     entity: 'calendar',
     operation: 'create',
     tempId: draft.id,
@@ -245,7 +246,7 @@ export const updateOfflineCalendarEvent = (
   });
 
   appendOutbox({
-    id: crypto.randomUUID(),
+    id: createUuid(),
     entity: 'calendar',
     operation: 'update',
     idRef: id,
@@ -260,7 +261,7 @@ export const updateOfflineCalendarEvent = (
 export const deleteOfflineCalendarEvent = (id: string): StudyPlanEvent[] => {
   const items = removeCalendar(id);
   appendOutbox({
-    id: crypto.randomUUID(),
+    id: createUuid(),
     entity: 'calendar',
     operation: 'delete',
     idRef: id,
@@ -273,7 +274,7 @@ export const deleteOfflineCalendarEvent = (id: string): StudyPlanEvent[] => {
 export const clearOfflineCalendarEvents = (): StudyPlanEvent[] => {
   writeCalendarCache([]);
   appendOutbox({
-    id: crypto.randomUUID(),
+    id: createUuid(),
     entity: 'calendar',
     operation: 'clear',
     createdAt: new Date().toISOString(),
@@ -287,7 +288,7 @@ export const queueKanbanBoardSave = (payload: KanbanBoard): void => {
   replaceOutboxLatest(
     (entry) => entry.entity === 'kanban',
     {
-      id: crypto.randomUUID(),
+      id: createUuid(),
       entity: 'kanban',
       operation: 'save',
       payload,
@@ -302,7 +303,7 @@ export const queueKanbanBoardReset = (payload: KanbanBoard): void => {
   replaceOutboxLatest(
     (entry) => entry.entity === 'kanban',
     {
-      id: crypto.randomUUID(),
+      id: createUuid(),
       entity: 'kanban',
       operation: 'reset',
       createdAt: new Date().toISOString(),
@@ -316,7 +317,7 @@ export const queueSettingsUpdate = (dailyTargetMinutes: number): void => {
   replaceOutboxLatest(
     (entry) => entry.entity === 'settings',
     {
-      id: crypto.randomUUID(),
+      id: createUuid(),
       entity: 'settings',
       operation: 'update',
       payload: { dailyTargetMinutes },

@@ -3,6 +3,7 @@ import axios from 'axios';
 
 import { customAxios } from '@/api';
 import type { StudySession, Subject } from '@/services/storage';
+import { createUuid } from '@/utils/uuid';
 
 const SESSIONS_CACHE_KEY = 'study-tracker:sessions';
 const SUBJECTS_CACHE_KEY = 'study-tracker:subjects';
@@ -137,13 +138,13 @@ const replaceSubjectId = (sourceId: string, target: Subject): Subject[] => {
 
 export const createOfflineSession = (payload: Omit<StudySession, 'id'>): StudySession[] => {
   const draft: StudySession = {
-    id: `local-session-${crypto.randomUUID()}`,
+    id: `local-session-${createUuid()}`,
     ...payload,
   };
 
   const items = upsertSession(draft);
   appendOutbox({
-    id: crypto.randomUUID(),
+    id: createUuid(),
     entity: 'session',
     operation: 'create',
     tempId: draft.id,
@@ -165,7 +166,7 @@ export const updateOfflineSession = (
 
   const next = upsertSession({ ...found, ...payload });
   appendOutbox({
-    id: crypto.randomUUID(),
+    id: createUuid(),
     entity: 'session',
     operation: 'update',
     idRef: id,
@@ -180,7 +181,7 @@ export const updateOfflineSession = (
 export const deleteOfflineSession = (id: string): StudySession[] => {
   const items = removeSession(id);
   appendOutbox({
-    id: crypto.randomUUID(),
+    id: createUuid(),
     entity: 'session',
     operation: 'delete',
     idRef: id,
@@ -192,13 +193,13 @@ export const deleteOfflineSession = (id: string): StudySession[] => {
 
 export const createOfflineSubject = (payload: Omit<Subject, 'id'>): Subject[] => {
   const draft: Subject = {
-    id: `local-subject-${crypto.randomUUID()}`,
+    id: `local-subject-${createUuid()}`,
     ...payload,
   };
 
   const items = upsertSubject(draft);
   appendOutbox({
-    id: crypto.randomUUID(),
+    id: createUuid(),
     entity: 'subject',
     operation: 'create',
     tempId: draft.id,
@@ -220,7 +221,7 @@ export const updateOfflineSubject = (
 
   const next = upsertSubject({ ...found, ...payload });
   appendOutbox({
-    id: crypto.randomUUID(),
+    id: createUuid(),
     entity: 'subject',
     operation: 'update',
     idRef: id,
@@ -235,7 +236,7 @@ export const updateOfflineSubject = (
 export const deleteOfflineSubject = (id: string): Subject[] => {
   const items = removeSubject(id);
   appendOutbox({
-    id: crypto.randomUUID(),
+    id: createUuid(),
     entity: 'subject',
     operation: 'delete',
     idRef: id,

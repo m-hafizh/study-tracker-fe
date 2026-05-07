@@ -16,6 +16,7 @@ import {
   writeCalendarCache,
 } from "@/features/workspace/offlineSync";
 import type { MutationResult } from "@/lib/form-feedback";
+import { createUuid } from "@/utils/uuid";
 
 const now = () => new Date().toISOString();
 
@@ -29,7 +30,7 @@ const seedEvents = (): StudyPlanEvent[] => {
   const timestamp = now();
   return [
     {
-      id: crypto.randomUUID(),
+      id: createUuid(),
       title: "Review Calculus Chapter 4",
       subject: "Math",
       date: new Date().toISOString().split("T")[0],
