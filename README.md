@@ -65,6 +65,21 @@ Configured via Vite env variables (see `src/configs/api.config.ts`):
 - `VITE_BASE_API_URL`
 - `VITE_PRIVATE_API_KEY` (optional/private header flow)
 
+## Vercel
+
+This project is configured for Vercel with `vercel.json`.
+
+- Framework: Vite
+- Install command: `pnpm install --frozen-lockfile`
+- Build command: `pnpm build`
+- Output directory: `dist`
+- SPA fallback: all non-file routes are rewritten to `index.html` for React Router routing
+
+Set these project environment variables in Vercel before deploying:
+
+- `VITE_BASE_API_URL`: backend origin, for example `https://api.example.com` (frontend app appends `/v1` automatically)
+- `VITE_PRIVATE_API_KEY`: optional; set only if your backend expects this header
+
 ## Runtime requirements
 
 - Node.js `v22.12.0`
